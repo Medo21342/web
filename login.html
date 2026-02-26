@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تسجيل الدخول</title>
+<style>
+html, body {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    background:#0b0b0b; 
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    outline: none;           /* يشيل الإطار الأزرق */
+    box-shadow: none;        /* يشيل أي ظل إضافي */
+    -webkit-tap-highlight-color: transparent; /* يشيل الـ highlight على الموبايل والضغط */
+
+}
+
+.login-box {
+    background:#1a1a1a;
+    width: 300px;
+    padding: 40px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    text-align:center;
+    color:white;
+    box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+}
+
+.login-box h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+    color:#ff5fa2;
+    font-weight: 500;
+}
+
+.input-group, .login-box button {
+    width: 85%;
+    margin: 0 auto 18px auto;
+}
+
+/* تم تغيير النوع ليكون النص ظاهراً */
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background:#222;
+    color:white;
+    font-size: 15px;
+    box-sizing: border-box;
+    text-align: center; /* توسيط النص المكتوب */
+}
+
+.input-group input:focus {
+    outline:none;
+    border-color: #ff5fa2;
+}
+
+.login-box button {
+    display: block;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #ff5fa2, #ff8fa3);
+    color:white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor:pointer;
+    transition: 0.3s;
+}
+
+.login-box button:hover {
+    background:#ff8fc4;
+}
+
+    
+/* تصميم التوست (Toast) */
+#toast {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1;
+    bottom: 30px;
+    font-size: 14px;
+    transition: 0.5s;
+}
+
+#toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    
+* {
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+    
+    .heart-touch{
+position:fixed;
+pointer-events:none;
+font-size:20px;
+animation:heartPop 0.7s ease forwards;
+}
+
+@keyframes heartPop{
+0%{transform:scale(.3);opacity:0}
+40%{transform:scale(1.4);opacity:1}
+70%{transform:scale(1);opacity:1}
+100%{transform:scale(.6) translateY(-40px);opacity:0}
+}
+    
+    /* منع التحديد */
+*{
+user-select:none;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+}
+
+/* منع لون التحديد */
+::selection{
+background:transparent;
+}
+    </style>
+</head>
+<body>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<div class="login-box">
+    <h2>اكتبي الباسورد يا كوتي 😻</h2>
+    <div class="input-group">
+        <input type="text" id="password" placeholder="اكتبي يا صغنن">
+    </div>
+    <button onclick="login()">خشي يا حبيبتي</button>
+    <h5>الباسورد : بحبك يا + اكتر دلع بتحبيه فكري بقا</h2>
+</div>
+
+<div id="toast"></div>
+
+<script>
+function showToast(message, isError) {
+    const toast = document.getElementById("toast");
+    toast.innerHTML = message;
+    toast.className = "show";
+    
+    // تغيير اللون حسب الحالة
+    toast.style.backgroundColor = isError ? "#e74c3c" : "#2ecc71";
+    
+    setTimeout(function(){ 
+        toast.className = toast.className.replace("show", ""); 
+    }, 3000);
+}
+
+function login(){
+    const pass = document.getElementById("password").value;
+    if(pass === "بحبك يا بنت قلبي"){
+        showToast("شطوره يا بسبوستي اتبسطي بقااا 😍", false);
+        setTimeout(() => {
+        window.location.href = "main.html";
+        }, 1500);
+        window.startMusic();
+    } else {
+        showToast("غلط يا روح امك 🤨", true);
+    }
+}
+    
+    document.addEventListener("click",e=>{
+let heart=document.createElement("div");
+heart.className="heart-touch";
+heart.innerHTML="💗";
+
+heart.style.left=e.clientX+"px";
+heart.style.top=e.clientY+"px";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),700);
+});
+    
+    // منع كليك يمين
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// منع اختصارات النسخ
+document.addEventListener("keydown",e=>{
+if(
+(e.ctrlKey && ["c","x","u","s","a"].includes(e.key.toLowerCase())) ||
+(e.ctrlKey && e.shiftKey && e.key.toLowerCase()=="i") ||
+(e.key==="F12")
+){
+e.preventDefault();
+}
+});
+</script>
+</body>
+</html>

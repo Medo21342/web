@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Music 💗</title>
+<style>
+body{margin:0;min-height:100vh;background:linear-gradient(135deg,#0b0b0b,#1a001f,#000);display:flex;justify-content:center;align-items:center;font-family:Arial;color:white;-webkit-tap-highlight-color:transparent;}
+* {-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.container{width:80%;max-width:420px;background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border-radius:25px;padding:25px;box-shadow:0 0 30px rgba(255,0,150,.3);text-align:center;}
+.photo{width:140px;height:140px;border-radius:50%;object-fit:cover;border:3px solid #ff4da6;box-shadow:0 0 20px rgba(255,77,166,.6);margin-bottom:10px;}
+h1{margin:10px 0;color:#ff4da6;}
+.playlist{position:relative;margin:15px 0;}
+.playlist-btn{width:100%;padding:10px 15px;border:none;border-radius:15px;background:linear-gradient(135deg,#0b0b0b,#1a001f,#000);color:white;cursor:pointer;font-weight:bold;display:flex;justify-content:space-between;align-items:center;}
+.playlist-menu{display:none;position:absolute;width:100%;background:#250c29;border-radius:15px;margin-top:8px;max-height:200px;overflow-y:auto;box-shadow:0 0 15px rgba(0,0,0,.2);z-index:10;overflow-y: auto;}
+.playlist-menu.show{display:block;}
+.playlist-menu div{padding:12px 15px;cursor:pointer;text-align:right;border-bottom:1px solid rgba(255,255,255,0.1);}
+.playlist-menu .active {background:linear-gradient(90deg,#ff4da6aa,#ff80c0aa);color:#fff;font-weight:bold;border-radius:15px;}
+.song-name{font-size:20px;font-weight:bold;color:White;}
+.song-info{font-size:12px;color:LightGrey;}
+.music-player{margin:20px 0;}
+.progress-container{width:100%;margin-bottom:15px;}
+#progress{direction:ltr;width:100%;appearance:none;height:6px;border-radius:5px;background:#330033;outline:none;cursor:pointer;}
+#progress::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#ff4da6;box-shadow:0 0 10px #ff4da6;}
+.controls-row{display:flex;justify-content:center;align-items:center;gap:25px;margin-top:10px;}
+.ctrl-btn{width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#ff4da6;font-size:18px;cursor:pointer;display:flex;justify-content:center;align-items:center;transition:.2s;}
+#playBtn{width:55px;height:55px;font-size:22px;background:rgba(255,77,166,0.1);}
+.ctrl-btn:hover{background:rgba(255,77,166,0.2);transform:scale(1.1);}
+.ctrl-btn:active{transform:scale(0.9);}
+.time{font-size:12px;opacity:.7;margin-top:8px;}
+.lyrics{margin-top:15px;max-height:180px;overflow-y:auto;padding:10px;border-radius:15px;background:rgba(0,0,0,.3);}
+.lyrics p{margin:8px 0;line-height:1.6;color:#ffd6ea;transition:0.3s;opacity:0.4;cursor:pointer;}
+.lyrics p.active{color:#fff;font-weight:bold;transform:scale(1.05);opacity:1;}
+.button{display:block;width:100%;padding:10px;margin:20px auto 0;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#ffd6f0;cursor:pointer;text-decoration:none;font-size:14px;}
+.back-btn { background: rgba(255, 255, 255, 0.1); color: #ff8fa3; border: 1px solid #ff5fa2; }
+
+/* ستايل الشاشة السوداء */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 11, 11, 0.98);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    outline: none;           /* يشيل الإطار الأزرق */
+    box-shadow: none;        /* يشيل أي ظل إضافي */
+    -webkit-tap-highlight-color: transparent; /* يشيل الـ highlight على الموبايل والضغط */
+
+}
+
+.overlay-content { text-align: center; color: white; padding: 20px; }
+.overlay-content h2 { color: #ff5fa2; font-size: 24px; margin-bottom: 15px; }
+
+.start-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff5fa2;
+    color: white;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 0 20px rgba(255, 95, 162, 0.5);
+    animation: pulse 1.5s infinite;
+    outline: none;           /* يشيل الإطار الأزرق */
+    box-shadow: none;        /* يشيل أي ظل إضافي */
+    -webkit-tap-highlight-color: transparent; /* يشيل الـ highlight على الموبايل والضغط */
+
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+    .heart-touch{
+position:fixed;
+pointer-events:none;
+animation:heartFloat 1.2s ease forwards;
+z-index:10000;
+will-change: transform, opacity;
+}
+
+@keyframes heartFloat{
+0%{
+transform:scale(.2) translateY(0) rotate(0deg);
+opacity:0;
+}
+20%{
+opacity:1;
+}
+60%{
+transform:scale(1.2) translateY(-25px) rotate(15deg);
+}
+100%{
+transform:scale(.8) translateY(-70px) rotate(-15deg);
+opacity:0;
+}
+}
+    
+    /* منع التحديد */
+*{
+user-select:none;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+}
+
+/* منع لون التحديد */
+::selection{
+background:transparent;
+}
+    
+  .menu-header-box{
+    padding:0px;
+    background:rgba(255,77,166,0.1);
+    position: sticky; /* يخليه ثابت عند السكورول */
+    top: 0;           /* يثبت في أعلى الليستة */
+    width: calc(100% - 30px);;
+    top:0;
+    z-index:5;
+    border-bottom:1px solid rgba(255,255,255,0.1); 
+    cursor:default;
+    overflow:hidden;
+}
+
+.header-title{
+    color:#ff5aa9;
+    font-size:17px;
+    margin-top:-5px;
+}
+
+.header-subtitle{
+    color:#e6c7d9;
+    font-size:12px;
+    margin-top:-12px;
+    margin-bottom:-8px;
+    opacity:0.85;
+}
+    
+    .fixed-header {
+    position: sticky; /* لجعل العنصر يلتصق */
+    top: 0;           /* يلتصق في أعلى القائمة */
+    background:#3b1336; /* نفس لون خلفية القائمة عشان ميظهرش كلام وراه */
+    z-index: 100;     /* لضمان ظهوره فوق أسماء الأغاني */
+    padding: px;
+    border-bottom: 2px solid;
+    margin-bottom: 5px;
+}
+    
+    .songs-list{
+    margin-top: 140px;
+}
+    </style>
+</head>
+<body>
+    <div id="overlay">
+    <div class="start-btn">دوسي هنا يا بسبوستي 💗</div>
+    <p style="margin-top: 20px; color: #888; font-size: 14px;">اغاني بتفكرني بيكي وبتعبر عننا</p>
+</div>
+<div class="container">
+    <img src="photo/img5.jpg" class="photo">
+    <h1>اغاني بتعبر عننا</h1>
+    <p>Medo ♡ Basmala</p>
+
+    <div class="playlist">
+        <button class="playlist-btn" onclick="toggleList()">
+            <span id="playlistBtnText">اختار أغنية</span><span>⌄</span>
+        </button>
+        <div class="playlist-menu" id="playlistMenu">  
+            
+            <div class="fixed-header">
+    <h2 class="header-title">اختاري اغنيه يا عيوني 😻</h2>
+    <p class="header-subtitle">اغاني بتفكرني بيكي وبتعبر عننا يا بسوستي</p>
+</div>
+            
+            <div onclick="changeSong(0, this)"><div class="song-name">حبيبي دا - توليت</div><div class="song-info">اغنيه حبيتها جداً وعسوله</div></div>
+            <div onclick="changeSong(1, this)"><div class="song-name">قدام عيونك - عمرو دياب</div><div class="song-info">انتي مش بتحبيه ولا بتحبي اغانيه بس انا بحبها المهم اسمعي واتبسطي</div></div>
+            <div onclick="changeSong(2, this)"><div  class="song-name">كلام الناس - جورج وسوف</div><div class="song-info">بصي هي حلوه بس اللحن طويل ابقي اعملي سكيب</div></div>
+            <div onclick="changeSong(3, this)"><div  class="song-name">كلمه - رامي صبري</div><div class="song-info">طبعاً يعني الاغنيه دي تحفه وبتحبيهااا</div></div>
+            <div onclick="changeSong(4, this)"><div class="song-name">وعدتك - عمرو دياب</div><div class="song-info">دي حلوه برضو اسمعي</div></div>
+            <div onclick="changeSong(5, this)"><div  class="song-name">زيها مين - محمد حماقي</div><div class="song-info">دي تحفههه وبتعبر عنك وعن حلاوتك جداً</div></div>
+        </div>
+    </div>
+
+    <div class="music-player">
+        <audio id="song" preload="auto"></audio>
+        <div class="progress-container">
+            <input type="range" id="progress" value="0">
+            <div class="time"><span id="timeDisplay">0:00 / 0:00</span></div>
+        </div>
+        <div class="controls-row">
+            <button class="ctrl-btn" onclick="nextSong()">«</button>
+            <button id="playBtn" class="ctrl-btn">▶</button>
+            <button class="ctrl-btn" onclick="prevSong()">»</button>
+        </div>
+    </div>
+
+    <div class="lyrics" id="lyricsBox"><p>اختر أغنية لعرض الكلمات...</p></div>
+    <button class="button back-btn" onclick="location.href='main.html'">العوده للصفحه الرئيسيه</button>
+</div>
+
+<script>
+let song=document.getElementById("song"),playBtn=document.getElementById("playBtn"),progress=document.getElementById("progress"),timeDisplay=document.getElementById("timeDisplay"),playlistMenu=document.getElementById("playlistMenu"),playlistBtnText=document.getElementById("playlistBtnText"),lyricsBox=document.getElementById("lyricsBox");
+let currentLyrics=[], currentSongIndex = -1, isUserScrolling = false, scrollTimeout;
+    
+const songs = ["music/song1.mp3", "music/song2.mp3", "music/song4.mp3", "music/song5.mp3", "music/song3.mp3", "music/song6.mp3"];
+const lyricsData = {
+    "music/song1.mp3": [{time:0,text:"🎵"},{time:21,text:"حبيبي ده عليه حاجات"},{time:24.6,text:"وقَّعني بنظرتين، يا ناس"},{time:28,text:"خلّاني عايز أسيب حياتي في ثانية"},{time:32.5,text:"وأكون معاه"},{time:35.3,text:"حبيبي ده أكيد جِنان"},{time:39.4,text:"أكيد إنتي حاسّاه كمان"},{time:43,text:"خلّيتيني أعيش حاجات"},{time:46.1,text:"ما عِشتهاش زمان"},{time:51.5,text:"كنتي تايهة مني فين؟"},{time:54.9,text:"ليكي بغنّي طول الليل"},{time:58.5,text:"ما تيجي نمشي من غير ليه؟"},{time:62.8,text:"ونتوه إحنا الاتنين"},{time:66.7,text:"مش محتاجين نقول كلام كتير"},{time:69.7,text:"خلّينا في بعض مبحلقين"},{time:71.5,text:"وعينينا يقولوا اللي بنحِس بيه"},{time:74.5,text:"مستغربين لكنّنا مع بعض من سنين"},{time:81.1,text:"هتفهميني لما بتيجي عينيا يشوفوا عينيكي"},{time:84.9,text:"وأمسِك بس إيديكي"},{time:86.3,text:"وترِنّي عليا وأرِن عليكي"},{time:88.5,text:"ده ما صدَّقت لقيتك"},{time:89.5,text:"بأمانة إنتي حاسّة باللي أنا فيه؟ آه"},{time:95,text:"🎵"},{time:117.1,text:"إنتي مش حاسّة ولاّ إيه؟"},{time:120,text:"إنتي مش حاسّة بيّا ليه؟ ليه؟ ليه؟"},{time:124.5,text:"حسّيني، نسّيني"},{time:131.2,text:"إنتي مش حاسّة ولاّ إيه؟"},{time:135.9,text:"إنتي مش حاسّة بيّا ليه؟ ليه؟ ليه؟"},{time:139.4,text:"حسّيني، نسّيني"},{time:147,text:"ده انا بجد ما صدقت لقيتك يا بسبوستي والاقي حد بجمالك وحلاوتك دي يبختي مووت 😍🫦"}],
+    "music/song2.mp3": [{time:0,text:"🎵"},{time:22.75,text:"قدام عيونك لقتني"},{time:26,text:"بقول يا ريتني أفضل معاك"},{time:31.8,text:"وبتيجي دايما في بالي"},{time:34.85,text:"معرفش مالي من يوم لقاك"},{time:40.5,text:"قدام عيونك لقتني"},{time:44,text:"بقول يا ريتني أفضل معاك"},{time:49.75,text:"وبتيجي دايما في بالي"},{time:53,text:"معرفش مالي من يوم لقاك"},{time:58,text:"ولا ليل وياك بشتاق"},{time:62,text:"وبتوه في كلام بقوله وشايله جوايا"},{time:68.2,text:"على طول وياك على طول"},{time:72,text:"ولآخر يوم في عمري هتبقى ويايا"},{time:79,text:"قدام عيونك لقتني"},{time:82.8,text:"بقول يا ريتني أفضل معاك"},{time:88,text:"وبتيجي دايما في بالي"},{time:91.5,text:"معرفش مالي من يوم لقاك"},{time:97,text:"🎵"},{time:108,text:"من يوم ما شوفتك بعيني"},{time:111,text:"مشغول يا عيني ديما كده"},{time:117,text:"من نظرة حبيتك إنت إزاي وإمتى"},{time:123,text:"كان كل ده"},{time:125.3,text:"ولا ليل وياك بشتاق"},{time:128.8,text:"وبتوه في كلام بقوله وشايله جوايا"},{time:135,text:"على طول وياك على طول"},{time:139.85,text:"ولآخر يوم في عمري هتبقى ويايا"},{time:146,text:"🎵"},{time:164,text:"ولا ليل وياك بشتاق"},{time:167.85,text:"وبتوه في كلام بقوله وشايله جوايا"},{time:173.95,text:"على طول وياك على طول"},{time:178.85,text:"ولآخر يوم في عمري هتبقى ويايا"},{time:184.9,text:"ولا ليل وياك بشتاق"},{time:188.5,text:"وبتوه في كلام بقوله وشايله جوايا"},{time:194.85,text:"على طول وياك على طول"},{time:199,text:"ولآخر يوم في عمري هتبقى ويايا"},{time:205,text:"🎵"},{time:215.5,text:"ولا ليل وياك بشتاق"},{time:219,text:"وبتوه في كلام بقوله وشايله جوايا"},{time:224,text:"بموت في عيونك يا بسبوستي وبحبها مووت 😔💗"}],
+    "music/song4.mp3": [{time:0,text:"🎵"},{time:76,text:"كلام الناس لا بيقدم ولا يأخر"},{time:85,text:"كلام الناس ملامة وغيرة مش أكتر"},{time:91,text:"كلام الناس لا بيقدم ولا يأخر"},{time:99.9,text:"كلام الناس ملامة وغيرة مش أكتر"},{time:107,text:"وليه يا حبيبتي نسمعهم؟"},{time:109.3,text:"أنا عاشق بسمعهم"},{time:112,text:"وليه يا حبيبتي نسمعهم؟"},{time:114,text:"أنا عاشق بسمعهم"},{time:117,text:"عيوني ما حد يمنعهم"},{time:120,text:"ولا بالوهم هتأثر"},{time:122,text:"ليه يا حبيبتي نسمعهم؟"},{time:125,text:"أنا عاشق بسمعهم"},{time:127,text:"وليه يا حبيبتي نسمعهم؟"},{time:130,text:"أنا عاشق بسمعهم"},{time:132,text:"عيوني ما حد يمنعهم"},{time:135,text:"ولا بالوهم هتأثر"},{time:138,text:"بكلام الناس، كلام الناس"},{time:143,text:"كلام الناس، كلام الناس"},{time:149,text:"كلام الناس لا لا لا لا لا"},{time:153,text:"لا بيقدم ولا يأخر"},{time:158,text:"🎵"},{time:197,text:"أنا حاسس، أنا شايف"},{time:200,text:"أنا فارس ومش خايف"},{time:202,text:"بحبك مهما قالوا الناس"},{time:205,text:"ورافع في هواكي الراس"},{time:208,text:"أنا حاسس، أنا شايف"},{time:210,text:"أنا فارس ومش خايف"},{time:212,text:"وبحبك مهما قالوا الناس"},{time:215,text:"ورافع في هواكي الراس"},{time:218,text:"عنك عمري يا عمري"},{time:221,text:"عمري يا عمري"},{time:223,text:"وعنك عمري يا عمري"},{time:226,text:"عمري يا عمري"},{time:230,text:"عنك عمري ما أتأخر"},{time:232,text:"وليه يا حبيبتي نسمعهم؟"},{time:235,text:"أنا عاشق بسمعهم"},{time:237.3,text:"وليه يا حبيبتي نسمعهم؟ (ليه؟)"},{time:239.7,text:"أنا عاشق بسمعهم"},{time:241,text:"عيوني ما حد يمنعهم"},{time:244,text:"ولا بالوهم هتأثر"},{time:247,text:"بكلام الناس، كلام الناس"},{time:252,text:"كلام الناس، كلام الناس"},{time:258,text:"كلام الناس لا لا لا لا لا"},{time:263,text:"لا بيقدم ولا يأخر"},{time:265,text:"🎵"},{time:306,text:"أنا حالف ما نتفارق"},{time:309,text:"أنا حالف لأكون عاشق"},{time:312,text:"وأشيلك جوة نني العين"},{time:314,text:"مهما إتكلموا اللايمين"},{time:317,text:"أنا حالف ما نتفارق"},{time:320,text:"أنا حالف لأكون عاشق"},{time:321,text:"وأشيلك جوة نني العين"},{time:324.8,text:"مهما إتكلموا اللايمين"},{time:328,text:"كلامهم عمره يا عمري"},{time:330,text:"كلامهم عمره يا عمري"},{time:333,text:"كلامهم عمره يا عمري"},{time:336,text:"عمره عمره يا عمري"},{time:338.8,text:"كلامهم عمره ما يأثر"},{time:341,text:"وليه يا حبيبتي نسمعهم؟"},{time:343,text:"أنا عاشق بسمعهم"},{time:346,text:"وليه يا حبيبتي نسمعهم؟ (ليه؟)"},{time:349,text:"أنا عاشق بسمعهم"},{time:352,text:"عيوني ما حد يمنعهم"},{time:353.5,text:"ولا بالوهم هتأثر"},{time:356,text:"بكلام الناس، كلام الناس"},{time:361,text:"كلام الناس، كلام الناس"},{time:367,text:"كلام الناس لا لا لا لا لا"},{time:371,text:"لا بيقدم ولا يأخر"},{time:375,text:"كلام الناس للهوا اما انا وانتي لبعض وهفضل احب وشايلك جوا عيوني طول العمر ومهما حصل يا بسبوستي 😻💋"}],
+    "music/song5.mp3": [{"time":0,"text":"🎵"},{"time":46,"text":"كلمة.. كلمة توديك أو كلمة تجيبك"},{"time":52.5,"text":"مين اللي قالك إني هسيبك؟"},{"time":57,"text":"إوعى تصدق إني حبيبك.. هتهون عليه"},{"time":65,"text":"إرجع.. إرجع وإعقل يا اللي بتسمع"},{"time":70.8,"text":"أي كلام يتقالك عني"},{"time":75.5,"text":"عمري ما أضيع قلبك مني.. وأعمل كده ليه؟"},{"time":83,"text":"قولي.. قولي ألاقي أنا زيك فين؟"},{"time":89,"text":"يا اللي ما فيش في جمالك إتنين"},{"time":94,"text":"هو إحنا عِشرة بس يومين؟"},{"time":98.5,"text":"ده أنا عايش ليك"},{"time":101.8,"text":"وإنت.. إنت حبيبي عارف من إمتى؟"},{"time":107.8,"text":"قبل عينيا ما تيجي في عينيك"},{"time":112,"text":"عشت سنين وأنا بحلم بيك"},{"time":120,"text":"🎵"},{"time":139,"text":"بسأل.. بسأل نفسي أنا كل ما أقبلك"},{"time":145,"text":"كنت إزاي عايش من قبلك؟"},{"time":149.5,"text":"مين قلبه عليا غير قلبك؟"},{"time":154,"text":"غيرك ما ليش"},{"time":157.7,"text":"والله.. يحرم والله النوم على عيني"},{"time":163.95,"text":"وإنت حبيبي غايب عن عيني"},{"time":168.8,"text":"دي ضحكتك دي بتخليني.. قادر أعيش"},{"time":176,"text":"قولي.. قولي ألاقي أنا زيك فين؟"},{"time":181,"text":"يا اللي ما فيش في جمالك إتنين"},{"time":185.8,"text":"هو إحنا عِشرة بس يومين؟"},{"time":190.7,"text":"ده أنا عايش ليك"},{"time":193,"text":"وإنت.. إنت حبيبي عارف من إمتى؟"},{"time":200,"text":"🎵"},{"time":206,"text":"عشت سنين وأنا بحلم بيك"},{"time":211,"text":"مش مستني غير كلمه واحده بس يا بسبوستي تطمني وتحسسني بالامان ومهما حصل هفضل جمبك يا روحي ده إحنا عشرة 3 سنين يا بت 😍💗"}],
+    "music/song3.mp3": [{time:0,text:"🎵"},{time:22.5,text:"وعدتك إني أبقى لك"},{time:24.6,text:"وأقدم عمري من قلبي"},{time:28.35,text:"وروحي تملي ريحالك"},{time:30,text:"وبأطمن عشان جنبي"},{time:32.2,text:"وعدتك إني أبقى لك"},{time:34.5,text:"وأقدم عمري من قلبي"},{time:37.2,text:"وروحي تملي ريحالك"},{time:39.91,text:"وبأطمن عشان جنبي"},{time:42.39,text:"كفاية تكون في أحضاني"},{time:45,text:"عيونك تبقى ندهاني"},{time:47,text:"أنا حابب حياتي معاك"},{time:49.7,text:"ولا عايز حبيب تاني"},{time:51.6,text:"وعدتك إني أبقى لك"},{time:55.3,text:"وأقدم عمري من قلبي"},{time:57.7,text:"وروحي تملي ريحالك"},{time:59.9,text:"وبأطمن عشان جنبي"},{time:62,text:"وعدتك إني ابقى لك"},{time:64.3,text:"وأقدم عمري من قلبي"},{time:67,text:"وروحي تملي ريحالك"},{time:69.6,text:"وبأطمن عشان جنبي"},{time:72.4,text:"كفاية تكون في أحضاني"},{time:74.8,text:"عيونك تبقى ندهاني"},{time:77,text:"أنا حابب حياتي معاك"},{time:80,text:"ولا عايز حبيب تاني"},{time:82,text:"🎵"},{time:92.5,text:"حبيبي وأغلى من عمري"},{time:94.7,text:"ومن أول كلام بينا"},{time:97.3,text:"عرفت إني لقيت عمري"},{time:99.2,text:"وشوفت الدنيا دي جنة"},{time:102,text:"حبيبي وأغلى من عمري"},{time:104,text:"ومن أول كلام بينا"},{time:107,text:"عرفت إني لقيت عمري"},{time:109.65,text:"وشوفت الدنيا دي جنة"},{time:112.25,text:"كفاية تكون في أحضاني"},{time:114.3,text:"عيونك تبقى ندهاني"},{time:117.2,text:"أنا حابب حياتي معاك"},{time:120,text:"ولا عايز حبيب تاني"},{time:122.7,text:"🎵"},{time:147.5,text:"كفاية تكون في أحضاني"},{time:149.3,text:"عيونك تبقى ندهاني"},{time:152.15,text:"أنا حابب حياتي معاك"},{time:154,text:"ولا عايز حبيب تاني"},{time:157,text:"كفاية تكون في أحضاني"},{time:159.6,text:"عيونك تبقى ندهاني"},{time:161.85,text:"أنا حابب حياتي معاك"},{time:164.55,text:"ولا عايز حبيب تاني"},{time:167,text:"وعدتك إني أبقى لك"},{time:169.5,text:"وأقدم عمري من قلبي"},{time:171,text:"وروحي تملي ريحالك"},{time:174.3,text:"وبطمن عشان جنبي"},{time:176,text:"وعدتك إني أبقى لك"},{time:179,text:"وأقدم عمري من قلبي"},{time:181,text:"وروحي تملي ريحالك"},{time:184,text:"وبأطمن عشان جنبي"},{time:186.85,text:"كفاية تكون في أحضاني"},{time:189,text:"عيونك تبقى ندهاني"},{time:191.5,text:"أنا حابب حياتي معاك"},{time:193.5,text:"ولا عايز حبيب تاني"},{time:206,text:"وعدتك ابقا معاكي علطول يا بسبوستي وهفضل طول عمري معاكي يا روحي😍💗"}],
+    "music/song6.mp3": [{"time":0,"text":"🎵"},{"time":9.8,"text":"حلوة وبتحلي أي مكان وتنوره"},{"time":13.9,"text":"والله ما تلاقوا زيها ليفوا الدنيا ودوروا"},{"time":19,"text":"دي جمالها معدي واللي يشوفه بيقدره"},{"time":23,"text":"والله ما تلاقوا زيها زيها مين بتهزروا"},{"time":28,"text":"تؤمر تتأمر ماهي دي اللي عليها منمر"},{"time":33,"text":"طبعاً حقها تدلع تتبغدد أوي تتمنع"},{"time":38,"text":"تؤمر تتأمر ماهي دي اللي عليها منمر"},{"time":42,"text":"طبعاً حقها تدلع تتبغدد أوي تتمنع"},{"time":47.75,"text":"قصاد الغمزة إحنا تلامذة"},{"time":51,"text":"قصاد المشية إحنا الحاشية"},{"time":53,"text":"ودي السلطانة وتتسلطن نغني معاها ونتسلطن"},{"time":58,"text":"قصاد الغمزة إحنا تلامذة"},{"time":60,"text":"قصاد المشية إحنا الحاشية"},{"time":62,"text":"ودي السلطانة وتتسلطن نغني معاها"},{"time":67,"text":"ليل يا عين يا ليل يا عين يا ليل"},{"time":69,"text":"عين يا ليل يا عين يا ليل يا عين"},{"time":76,"text":"يا عين يا ليل يا يا ليلة"},{"time":79,"text":"يا ليل يا عين يا ليلة"},{"time":86,"text":"🎵"},{"time":105,"text":"الورد إتنقى بالواحدة عشان خدها"},{"time":109,"text":"يا جماعة مش ممكن لأ دي لا قبلها ولا بعدها"},{"time":114,"text":"ما بتدلعشي ماهي دلوعة لوحدها"},{"time":119,"text":"الرقة يا ناس رباني رباني يا ناس بُعدها"},{"time":124,"text":"أنا مش هتكلم أنا رافع إيدي مسلم"},{"time":128,"text":"القد يا ناس يتدرس منه الغزلان تتعلم"},{"time":134,"text":"ده أنا مش هتكلم أنا رافع إيدي مسلم"},{"time":138,"text":"القد يا ناس يتدرس منه الغزلان تتعلم"},{"time":143,"text":"قصاد الغمزة إحنا تلامذة"},{"time":145,"text":"قصاد الماشية إحنا الحاشية"},{"time":148.8,"text":"ودي السلطانة وتتسلطن نغني معاها ونتسلطن"},{"time":153,"text":"قصاد الغمزة إحنا تلامذة"},{"time":155,"text":"قصاد الماشية احنا الحاشية"},{"time":158,"text":"ودي السلطانة وتتسلطن نغني معاها"},{"time":162,"text":"ليل يا عين يا ليل يا عين يا ليل"},{"time":164,"text":"عين يا ليل يا عين يا ليل يا عين"},{"time":171,"text":"يا عين يا ليل يا يا ليلة"},{"time":174,"text":"يا ليل يا عين يا ليلة"},{"time":175,"text":"كدا كدا حلوه يا عيوني انتي ومفيش احلى منك ابداً يا ست البنات انتي ولا عمري هشوف احلى منك ابداً 😋💗"}],
+};
+
+// وظيفة التشغيل
+function forcePlay() {
+    if (song.src) {
+        song.play().then(() => {
+            playBtn.innerHTML = "❚❚";
+        }).catch(err => console.log("Waiting for user interaction..."));
+    }
+}
+
+// زرار الدخول
+function startEverything() {
+    sessionStorage.setItem('hasEntered', 'true');
+    const overlay = document.getElementById('welcomeOverlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 800);
+    forcePlay();
+}
+
+window.onload = () => {
+    const hasEntered = sessionStorage.getItem('hasEntered');
+    const overlay = document.getElementById('welcomeOverlay');
+    const savedSongIndex = localStorage.getItem('music_index');
+    const savedTime = localStorage.getItem('music_time');
+
+    if (savedSongIndex !== null) {
+        let items = document.querySelectorAll('.playlist-menu > div');
+        changeSong(parseInt(savedSongIndex), items[savedSongIndex], false); 
+        if (savedTime) song.currentTime = parseFloat(savedTime);
+    }
+
+    if (!hasEntered) {
+        overlay.style.display = 'flex';
+    } else {
+        overlay.style.display = 'none';
+        setTimeout(forcePlay, 500);
+    }
+};
+
+// حفظ الوقت باستمرار
+setInterval(() => {
+    if (currentSongIndex !== -1 && !song.paused) {
+        localStorage.setItem('music_index', currentSongIndex);
+        localStorage.setItem('music_time', song.currentTime);
+    }
+}, 1000);
+
+playBtn.onclick=()=>{
+    if(!song.src)return;
+    if(song.paused){song.play();playBtn.innerHTML="❚❚";}
+    else{song.pause();playBtn.innerHTML="▶";}
+};
+
+song.ontimeupdate = () => {
+    if (!song.duration) return;
+    let pct = (song.currentTime / song.duration) * 100;
+    progress.value = pct;
+    progress.style.background = `linear-gradient(to right,#ff4da6 ${pct}%,#330033 ${pct}%)`;
+    timeDisplay.innerText = formatTime(song.duration) + " / " + formatTime(song.currentTime);
+    
+    let lines = lyricsBox.querySelectorAll("p");
+    currentLyrics.forEach((l, i) => {
+        if (song.currentTime >= l.time) {
+            lines.forEach(p => p.classList.remove("active"));
+            if (lines[i]) {
+                lines[i].classList.add("active");
+                if (!isUserScrolling) {
+                    lyricsBox.scrollTo({top: lines[i].offsetTop - lyricsBox.offsetTop - 40, behavior: 'smooth'});
+                }
+            }
+        }
+    });
+};
+
+// --- تعديل مهم جداً للتقديم والتأخير ---
+progress.oninput = () => {
+    if (song.duration) {
+        const seekTime = (progress.value / 100) * song.duration;
+        song.currentTime = seekTime;
+    }
+};
+
+function changeSong(index, el, autoPlay = true){
+    currentSongIndex = index;
+    let file = songs[index];
+    song.src = file; 
+    if(autoPlay) {
+        song.play(); 
+        playBtn.innerHTML = "❚❚";
+    }
+    
+    playlistBtnText.innerText = el ? el.querySelector(".song-name").innerText : "أغنية " + (index + 1);
+    document.querySelectorAll('.song-list > div').forEach(div => div.classList.remove("active"));
+    if(el) el.classList.add("active");
+    playlistMenu.classList.remove("show");
+    
+    lyricsBox.innerHTML = "";
+    currentLyrics = lyricsData[file] || [];
+    currentLyrics.forEach((l, i) => {
+        let p = document.createElement("p");
+        p.innerText = l.text;
+        p.onclick = () => { 
+            song.currentTime = l.time; 
+            if(song.paused) song.play();
+            playBtn.innerHTML = "❚❚"; 
+        };
+        lyricsBox.appendChild(p);
+    });
+    localStorage.setItem('music_index', index);
+}
+
+function nextSong(){
+    let next = (currentSongIndex + 1) % songs.length;
+    let items = document.querySelectorAll('.playlist-menu > div');
+    changeSong(next, items[next]);
+}
+
+function prevSong(){
+    let prev = (currentSongIndex - 1 + songs.length) % songs.length;
+    let items = document.querySelectorAll('.playlist-menu > div');
+    changeSong(prev, items[prev]);
+}
+
+function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);return m+":"+(s<10?"0"+s:s);}
+function toggleList(){playlistMenu.classList.toggle("show");}
+window.onclick=(e)=>{if(!e.target.closest('.playlist'))playlistMenu.classList.remove("show");}
+lyricsBox.onscroll = () => {
+    isUserScrolling = true;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 750); 
+};
+
+// استقبال رسائل التشغيل من الماين
+window.addEventListener('message', function(event) {
+    if (event.data === 'play_now') forcePlay();
+});
+
+// إرسال الحالة للماين
+song.onplay = () => window.parent.postMessage('is_playing', '*');
+song.onpause = () => window.parent.postMessage('is_paused', '*');
+document.getElementById('overlay').addEventListener('click', function() {
+    this.style.display = 'none';
+    arrangeCards();
+    subtitleEl.innerHTML = "";
+    });
+    
+    document.addEventListener("click",e=>{
+
+let heart=document.createElement("div");
+heart.className="heart-touch";
+heart.innerHTML="💗";
+
+let size=Math.random()*15+15;
+heart.style.fontSize=size+"px";
+
+heart.style.left=(e.clientX-size/2)+"px";
+heart.style.top=(e.clientY-size/2)+"px";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),1200);
+
+});
+    
+    // منع كليك يمين
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// منع اختصارات النسخ
+document.addEventListener("keydown",e=>{
+if(
+(e.ctrlKey && ["c","x","u","s","a"].includes(e.key.toLowerCase())) ||
+(e.ctrlKey && e.shiftKey && e.key.toLowerCase()=="i") ||
+(e.key==="F12")
+){
+e.preventDefault();
+}
+});
+</script>
+</body>
+</html>

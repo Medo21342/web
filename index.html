@@ -1,0 +1,204 @@
+<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Heart</title>  
+<style>  
+body {  
+    margin:0;  
+    height:100vh;  
+    display:flex;  
+    justify-content:center;  
+    align-items:center;  
+    background:#0b0b0b;  
+    overflow:hidden;  
+    font-family:Arial;  
+    -webkit-tap-highlight-color: transparent;  
+}  * {  
+direction: rtl;  
+unicode-bidi: isolate;
+
+}
+
+    /* منع التحديد */
+*{
+user-select:none;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+}
+
+/* منع لون التحديد */
+::selection{
+background:transparent;
+}
+    
+#game-container {
+text-align:center;
+background:#1a1a1a;
+padding:40px;
+border-radius:25px;
+width:280px;
+color:white;
+box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+}
+
+h2 { color:#ff5fa2; margin-bottom:15px; }
+
+#heart-wrapper {
+width:220px;
+height:220px;
+margin:20px auto;
+position:relative;
+cursor:pointer;
+transition: transform 0.1s ease;
+}
+
+#heart-wrapper:active { transform: scale(0.95); }
+
+#heart-outline {
+width:100%;
+height:100%;
+background:#222;
+clip-path:path('M110,66 C77,0 0,0 0,77 C0,132 110,198 110,198 C110,198 220,132 220,77 C220,0 143,0 110,66 Z');
+position:relative;
+}
+
+#heart-fill {
+position:absolute;
+bottom:0;
+width:100%;
+height:0%;
+background:linear-gradient(to top,#ff5fa2,#ff8fc4);
+transition:height .2s ease;
+}
+
+.flying-heart {
+position:absolute;
+animation:flyHeart linear forwards;
+pointer-events:none;
+z-index:999;
+}
+
+@keyframes flyHeart{
+0% {opacity:1; transform:translateY(0) rotate(0deg);}
+100% {opacity:0; transform:translateY(-600px) rotate(360deg);}
+}
+
+/* Toast أسفل الشاشة */
+#toast {
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#ff5fa2;
+color:white;
+padding:10px 20px;
+border-radius:20px;
+font-size:14px;
+opacity:0;
+pointer-events:none;
+transition:opacity 0.5s ease;
+}
+
+/* منع أي highlight */
+
+{
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+outline: none;
+}
+</style>
+
+
+</head>  
+<body>  <div id="game-container">  
+    <h2 id="status-text">دوسي تحت هنا 👇🏻</h2>  
+    <div id="heart-wrapper" onclick="fillHeart(event)">  
+        <div id="heart-outline">  
+            <div id="heart-fill"></div>  
+        </div>  
+    </div>  
+    <p style="color:#aaa;font-size:13px;">دوسي على القلب كتيررر</p>  
+</div>  <div id="toast">بحبك مووت 😍💗</div>  <script>  
+let clicks = 0;  
+const maxClicks = 60;  
+const heartFill = document.getElementById('heart-fill');  
+const statusText = document.getElementById('status-text');  
+const gameUI = document.getElementById('game-container');  
+const toast = document.getElementById('toast');  
+  
+function fillHeart(e){  
+    if(clicks < maxClicks){  
+        clicks++;  
+        let percent = (clicks / maxClicks) * 100;  
+        heartFill.style.height = percent + '%';  
+  
+        if(percent > 20) statusText.innerText="عاش كملي 😼";  
+        if(percent > 55) statusText.innerText="قربنا خلاااص 😻";  
+        if(percent > 90) statusText.innerText="يلااا اخر تاكتين تلاتهه وخلصنا 😍✋🏻";  
+        if(percent >= 100) statusText.innerText="اععع خلصنااااا ثواني بقاا 😻💗"  
+  
+        // قلب صغير عند كل ضغطة  
+        createFlyingHeart(e.offsetX, e.offsetY);  
+  
+        if(clicks >= maxClicks){  
+            setTimeout(showFinal,750);  
+        }  
+    }  
+}  
+  
+function createFlyingHeart(x,y){  
+    const heart = document.createElement('div');  
+    heart.className='flying-heart';  
+    heart.innerText='💗';  
+    heart.style.left = x+'px';  
+    heart.style.top = y+'px';  
+    heart.style.fontSize=(10+Math.random()*20)+'px';  
+    heart.style.animationDuration=(2+Math.random()*2)+'s';  
+    heart.style.transform = `rotate(${Math.random()*360}deg)`;  
+    document.getElementById('heart-wrapper').appendChild(heart);  
+    setTimeout(()=>heart.remove(),3000);  
+}  
+  
+function showFinal(){  
+    gameUI.style.display='none';  
+    toast.style.opacity=1;  
+  
+    // شلال قلوب ضخم جدًا  
+    const totalHearts = 900; // عدد القلوب كبير جدًا  
+    for(let i=0;i<totalHearts;i++){  
+        const heart = document.createElement('div');  
+        heart.className='flying-heart';  
+        heart.innerText='💗';  
+        heart.style.left = Math.random()*window.innerWidth+'px';  
+        heart.style.top = Math.random()*window.innerHeight+'px';  
+        heart.style.fontSize = (10+Math.random()*30)+'px';  
+        heart.style.animationDuration = (5+Math.random()*5)+'s';  
+        heart.style.transform = `rotate(${Math.random()*360}deg)`;  
+        document.body.appendChild(heart);  
+        setTimeout(()=>heart.remove(),8500);  
+    }  
+  
+    // بعد 2 ثانية تحويل للصفحة  
+    setTimeout(()=>{window.location.href="login.html";},6000);  
+}  
+    
+    // منع كليك يمين
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// منع اختصارات النسخ
+document.addEventListener("keydown",e=>{
+if(
+(e.ctrlKey && ["c","x","u","s","a"].includes(e.key.toLowerCase())) ||
+(e.ctrlKey && e.shiftKey && e.key.toLowerCase()=="i") ||
+(e.key==="F12")
+){
+e.preventDefault();
+}
+});
+ </script>  
+</body>  
+</html>

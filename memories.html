@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>memories</title>
+
+<style>
+body {
+    background: #0b0b0b;
+    color: white;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0; /* مساحة من فوق وتحت */
+    overflow-x: hidden;
+}
+
+/* البوكس المطلوب - مبيتدخلش في تنسيق العناصر اللي جواه */
+.main-container {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+    width: 90%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* شاشة البداية */
+#overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(11, 11, 11, 0.98);
+    z-index: 9999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.start-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff5fa2;
+    color: white;
+    border-radius: 50px;
+    border: none;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.title-text, .subtitle-text, .caption, .timer-card, .date { 
+    direction: rtl; 
+    unicode-bidi: isolate; 
+}
+
+.title-text {
+    font-size: 30px;
+    font-weight: bold;
+    color: #ff5fa2;
+    margin-bottom: 8px;
+}
+
+.subtitle-text {
+    font-size: 15px;
+    color: #ff8fa3;
+    margin-bottom: 40px; /* رجعت المسافة بين النص والألبوم */
+    padding: 20px;
+    min-height: 20px;
+}
+
+.stack-slider {
+    width: 280px;
+    margin-bottom: 20px;
+    perspective: 1000px;
+}
+
+.cards-container {
+    position: relative;
+    width: 100%;
+    height: 280px;
+}
+
+.cards-container .card {
+    width: 200px;
+    height: 260px;
+    position: absolute;
+    top: 0;
+    left: 40px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), z-index 0.3s ease;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.caption {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #ff5fa2;
+    text-align: center;
+    min-height: 50px;
+    padding: 0 20px;
+    transition: opacity 0.3s ease;
+}
+
+/* التايمر القديم بتاعك بالظبط */
+.timer-card {
+    background: #1a1a1a;
+    width: 280px;
+    padding: 18px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
+}
+
+.title { font-size: 16px; margin-bottom: 8px; font-weight: bold; }
+.date { color: #ff5fa2; margin-bottom: 15px; font-size: 13px; line-height: 1.4; }
+.row { display: flex; justify-content: space-between; margin: 8px 0; }
+.box { background: #222; padding: 8px 4px; border-radius: 10px; width: 80px; font-size: 11px; }
+.num { font-size: 18px; font-weight: bold; display: block; margin-bottom: 2px; }
+
+.button {
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        margin: 10px 0;
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(90deg, #ff5fa2, #ff8fa3);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .button:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(255,77,109,0.4); }
+    
+    .back-btn { background: rgba(255, 255, 255, 0.1); color: #ff8fa3; border: 1px solid #ff5fa2; }
+
+    .heart-touch{
+position:fixed;
+pointer-events:none;
+animation:heartFloat 1.2s ease forwards;
+z-index:10000;
+will-change: transform, opacity;
+}
+
+@keyframes heartFloat{
+0%{
+transform:scale(.2) translateY(0) rotate(0deg);
+opacity:0;
+}
+20%{
+opacity:1;
+}
+60%{
+transform:scale(1.2) translateY(-25px) rotate(15deg);
+}
+100%{
+transform:scale(.8) translateY(-70px) rotate(-15deg);
+opacity:0;
+}
+}
+    
+    /* منع التحديد */
+*{
+user-select:none;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+}
+
+/* منع لون التحديد */
+::selection{
+background:transparent;
+}
+</style>
+</head>
+
+<body>
+
+<div id="overlay">
+    <div class="start-btn">دوسي هنا يا بسبوستي 💗</div>
+    <p style="margin-top: 20px; color: #888; font-size: 14px;">احلى ذكريات بينا هنا</p>
+</div>
+
+<div class="main-container">
+    <div class="title-text">💗 ذكرياتنا 💗</div>
+    <div class="subtitle-text" id="subtitle"></div>
+        
+    <div class="stack-slider">
+        <div class="cards-container" id="cardsContainer">
+            <div class="card" style="background-image:url('photo/img4.jpg')" data-caption="💗 دي اول صوره اتصورناها سوا هي مش حلوه اوي يعني عشان جت بسرعه بس بحبها جداً كفايه انك فيها بس يا بسبوستي 💗"></div>
+            <div class="card" style="background-image:url('photo/img2.jpg')" data-caption="💗 ودي اول مره امسك ايدك وبجد كنت مبسوووط مووووت 💗"></div>
+            <div class="card" style="background-image:url('photo/img1.jpg')" data-caption="💗 ودي اول صوره نتصورهاا سوا من بعد ما رجعنا وبجد عسولهه موووت اي نعم شكلي مش عاجبني اوي بس بحبها مووت وانتي تحفهههه 💗"></div>
+            <div class="card" style="background-image:url('photo/img3.jpg')" data-caption="💗 ودي بقاا احلى صوره اتصورناها لحد دلوقتي واكتر صوره بحبها فيهم كلهممم 💗"></div>
+            <div class="card video-card" data-caption="💗 فيديو الذكريات حرفياً وبحبوو مووت فيه حجات كتيره حلوه لينا ده لو مكنش فيه كل حجاتنا اصلا وكلهم عسولين مووووت 💗">
+                <video src="videos/vid1.mp4" loop playsinline muted></video>
+            </div>
+        </div>
+        <div class="caption" id="caption"></div>
+    </div>
+
+    <div class="timer-card">
+        <div class="title">💗 منذ 27/2/2023 💗</div>
+        <div class="date" id="totalDays"></div>
+        <div class="row">
+            <div class="box"><span class="num" id="years">0</span>سنة</div>
+            <div class="box"><span class="num" id="months">0</span>شهر</div>
+            <div class="box"><span class="num" id="days">0</span>يوم</div>
+        </div>
+        <div class="row">
+            <div class="box"><span class="num" id="hours">0</span>ساعة</div>
+            <div class="box"><span class="num" id="minutes">0</span>دقيقة</div>
+            <div class="box"><span class="num" id="seconds">0</span>ثانية</div>
+        </div>
+        <div style="margin-top:10px;">💗 كل يوم معاكي احلى من اللي قبلو 💗</div>
+    </div>
+
+    <button style="width: 100%;" class="button back-btn" onclick="location.href='main.html'">العودة للصفحة الرئيسية</button>
+</div>
+<script>
+// السكريبت بتاعك "الأصلي" والمعدل للذكاء اللي اتفقنا عليه
+const startDate = new Date(2023, 1, 27, 23, 3, 0);
+const yearsEl = document.getElementById("years");
+const monthsEl = document.getElementById("months");
+const daysEl = document.getElementById("days");
+const hoursEl = document.getElementById("hours");
+const minutesEl = document.getElementById("minutes");
+const secondsEl = document.getElementById("seconds");
+const totalDaysEl = document.getElementById("totalDays");
+const subtitleEl = document.getElementById("subtitle");
+
+function calc() {
+    let now = new Date();
+    let diffMs = now - startDate;
+    let totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)+1);
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+    let days = now.getDate() - startDate.getDate();
+    let hours = now.getHours() - startDate.getHours();
+    let minutes = now.getMinutes() - startDate.getMinutes();
+    let seconds = now.getSeconds() - startDate.getSeconds();
+
+    if(seconds < 0){ seconds+=60; minutes--; }
+    if(minutes < 0){ minutes+=60; hours--; }
+    if(hours < 0){ hours+=24; days--; }
+    if(days < 0){
+        let prevMonthDays = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+        days += prevMonthDays;
+        months--;
+    }
+    if(months < 0){ months+=12; years--; }
+
+    yearsEl.innerText = years;
+    monthsEl.innerText = months;
+    daysEl.innerText = days;
+    hoursEl.innerText = hours;
+    minutesEl.innerText = minutes;
+    secondsEl.innerText = seconds;
+    totalDaysEl.innerText = "💗 " + totalDays + " يوم 💗";
+}
+
+setInterval(calc, 1000);
+calc();
+
+const container = document.getElementById("cardsContainer");
+const cards = Array.from(container.querySelectorAll(".card"));
+const caption = document.getElementById("caption");
+let currentIndex = 0;
+let lastIndex = -1;
+const total = cards.length;
+
+cards.forEach(card => {
+    if (card.classList.contains('video-card')) {
+        card.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const v = this.querySelector("video");
+            if (v) {
+                if (v.paused) v.play().catch(err => console.log(err));
+                else v.pause();
+            }
+        });
+    }
+});
+
+function handleVideos() {
+    cards.forEach((card, i) => {
+        const v = card.querySelector("video");
+        if (!v) return;
+        if (i === currentIndex) {
+            v.muted = false; 
+            v.play().catch(() => { v.muted = true; v.play(); });
+        } else {
+            v.pause();
+            v.currentTime = 0;
+        }
+    });
+}
+
+function typeWriter(text, i=0) {
+    if (i < text.length) {
+        subtitleEl.innerHTML += text.charAt(i);
+        setTimeout(()=>typeWriter(text, i+1), 30);
+    }
+}
+
+function arrangeCards() {
+    const isNewCard = currentIndex !== lastIndex;
+    cards.forEach((card, i) => {
+        let offset = i - currentIndex;
+        if (i === currentIndex) {
+            card.style.transform = `translateX(0) rotate(0deg) scale(1.1)`;
+            card.style.zIndex = total + 1;
+            card.style.opacity = "1";
+        } else {
+            card.style.transform = `translateX(${offset * 15}px) rotate(${offset * 10}deg) scale(0.9)`;
+            card.style.zIndex = total - Math.abs(offset);
+            card.style.opacity = "0.6";
+        }
+    });
+
+    if (isNewCard) {
+        caption.style.opacity = 0;
+        setTimeout(() => {
+            caption.innerText = cards[currentIndex].dataset.caption;
+            caption.style.opacity = 1;
+        }, 200);
+        lastIndex = currentIndex;
+    }
+    handleVideos();
+}
+
+let startX = 0;
+container.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+container.addEventListener("touchend", e => {
+    let endX = e.changedTouches[0].clientX;
+    let moveX = startX - endX;
+    if (Math.abs(moveX) > 50) {
+        if (moveX > 0) currentIndex = (currentIndex + 1) % total;
+        else currentIndex = (currentIndex - 1 + total) % total;
+        arrangeCards();
+    }
+});
+
+document.getElementById('overlay').addEventListener('click', function() {
+    this.style.display = 'none';
+    arrangeCards();
+    subtitleEl.innerHTML = "";
+    typeWriter("💗 بصي يا بسبوستي هي دي طبعاً جزء بسيط جداً من ذكرياتنا سوا بس دي اكتر حاجات بحبها لينا وطبعاً لينا ذكريات كتيررر اوي سوا كل يوم لينا واحنا مع بعض ده ذكرى حلوه وكل يوم معاكي ذكرى جديده بينا حجات كتيره اوي حلوه لو قعدت احكيها من هنا ل بكرا مش هخلصها بس دي اهم الحجات بينا صور لينا وتاريخ احلى يوم في حياتي كلها واللي بحمد ربنا عليه كل يوم ف مفيش حاجه جت في بالي احسن من دول اني احطهم في ركن ذكرياتنا 💗");
+});
+    
+    document.addEventListener("click",e=>{
+
+let heart=document.createElement("div");
+heart.className="heart-touch";
+heart.innerHTML="💗";
+
+let size=Math.random()*15+15;
+heart.style.fontSize=size+"px";
+
+heart.style.left=(e.clientX-size/2)+"px";
+heart.style.top=(e.clientY-size/2)+"px";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),1200);
+
+});
+    
+    // منع كليك يمين
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// منع اختصارات النسخ
+document.addEventListener("keydown",e=>{
+if(
+(e.ctrlKey && ["c","x","u","s","a"].includes(e.key.toLowerCase())) ||
+(e.ctrlKey && e.shiftKey && e.key.toLowerCase()=="i") ||
+(e.key==="F12")
+){
+e.preventDefault();
+}
+});
+</script>
+</body>
+</html>

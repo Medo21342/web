@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>الصفحة الرئيسية 💗</title>
+<style>
+    body {
+        background: #0b0b0b;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .container {
+        background: #1a1a1a;
+        padding: 30px 40px;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(255,77,109,0.2);
+        text-align: center;
+        width: 300px;
+        position: relative;
+        z-index: 10;
+    }
+
+    h1 { color: #ff5fa2; margin-bottom: 30px; font-size: 19px; }
+
+    .button {
+        display: block; width: 100%; padding: 15px 0; margin: 15px 0;
+        border: none; border-radius: 15px;
+        background: linear-gradient(90deg, #ff5fa2, #ff8fa3);
+        color: white; font-size: 16px; font-weight: bold;
+        cursor: pointer; transition: 0.3s;
+        outline: none; -webkit-tap-highlight-color: transparent;
+    }
+
+    .button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255,77,109,0.4); }
+
+    * { direction: rtl; unicode-bidi: isolate; -webkit-user-select: none; user-select: none; }
+
+    .text { font-size: 11px; margin-top:-15px; opacity: 0.8; }
+
+    /* ستايل الشاشة السوداء */
+    #welcomeOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px);
+        display: none; /* بنتحكم فيها بالجافا سكريبت */
+        justify-content: center; align-items: center;
+        z-index: 9999; transition: opacity 0.8s ease;
+    }
+
+    .overlay-content {transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), z-index 0.3s ease;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent; text-align: center; color: white; padding: 20px; }
+    .overlay-content h2 { color: #ff5fa2; font-size: 24px; margin-bottom: 15px; }
+    .overlay-content p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; }
+
+    .start-btn {
+        padding: 15px 40px; font-size: 18px; font-weight: bold; color: white;
+        background: linear-gradient(90deg, #ff5fa2, #ff8fa3);
+        border: none; border-radius: 50px; cursor: pointer;
+        box-shadow: 0 0 20px rgba(255, 95, 162, 0.5); transition: 0.3s;
+    }
+    
+.heart-touch{
+position:fixed;
+pointer-events:none;
+animation:heartFloat 1.2s ease forwards;
+z-index:10000;
+will-change: transform, opacity;
+}
+
+@keyframes heartFloat{
+0%{
+transform:scale(.2) translateY(0) rotate(0deg);
+opacity:0;
+}
+20%{
+opacity:1;
+}
+60%{
+transform:scale(1.2) translateY(-25px) rotate(15deg);
+}
+100%{
+transform:scale(.8) translateY(-70px) rotate(-15deg);
+opacity:0;
+}
+}
+    
+    /* منع التحديد */
+*{
+user-select:none;
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+}
+
+/* منع لون التحديد */
+::selection{
+background:transparent;
+}
+</style>
+</head>
+<body>
+
+<div id="welcomeOverlay">
+    <div class="overlay-content">
+        <h2>أهلاً بيكي في عالمنا الصغير 💗</h2>
+        <p>
+            الصفحة دي معموله مخصوص عشانك <br>
+            فيها ذكريات وأغاني بتفكرني بيكي.. <br>
+            جاهزه تشوفي المحتوى؟
+        </p>
+        <button class="start-btn" onclick="startEverything()">دخول 😍</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1> نورتي يا بسبوستي اتمنى تفرحي 💗</h1>
+    <button class="button" onclick="location.href='happy_message.html'">💌 Happy Message</button>
+    <button class="button" onclick="location.href='memories.html'">🏠 Memories</button>
+    <button class="button" onclick="location.href='music.html'">🎵 Song</button>
+    <h2>بحبك جداً يا ست البنات 😻💗</h2>
+    <h6 class="text">معمول بكل حب عشان ابسط اقرب حد ليا 😔💗</h6>
+</div>
+
+<script>
+    document.addEventListener("click",e=>{
+
+let heart=document.createElement("div");
+heart.className="heart-touch";
+heart.innerHTML="💗";
+
+let size=Math.random()*15+15;
+heart.style.fontSize=size+"px";
+
+heart.style.left=(e.clientX-size/2)+"px";
+heart.style.top=(e.clientY-size/2)+"px";
+
+document.body.appendChild(heart);
+
+        
+setTimeout(()=>heart.remove(),1200);
+ document.addEventListener("scroll",()=>{
+    createHeart(window.innerWidth/2,window.innerHeight/2);
+});
+        
+});
+    
+    const overlay = document.getElementById('welcomeOverlay');
+
+    // أول ما الصفحة تحمل
+    window.onload = function() {
+        // بنشوف هل بسبوسة دخلت قبل كدة في الجلسة دي؟
+        if (!sessionStorage.getItem('hasEnteredMain')) {
+            overlay.style.display = 'flex'; // لو مدخلتش، ورّيها الشاشة
+        }
+    };
+
+    function startEverything() {
+        // سجل إنها دخلت خلاص
+        sessionStorage.setItem('hasEnteredMain', 'true');
+        
+        // إخفاء الشاشة بنعومة
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 800);
+        
+        // لو لسه محتاج الأيفريم يشتغل في الخلفية، الكود ده بيشغله
+        const iframe = document.querySelector('iframe');
+        if (iframe) {
+            iframe.contentWindow.postMessage('play_now', '*');
+        }
+    }
+    
+    // منع كليك يمين
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// منع اختصارات النسخ
+document.addEventListener("keydown",e=>{
+if(
+(e.ctrlKey && ["c","x","u","s","a"].includes(e.key.toLowerCase())) ||
+(e.ctrlKey && e.shiftKey && e.key.toLowerCase()=="i") ||
+(e.key==="F12")
+){
+e.preventDefault();
+}
+});
+</script>
+
+</body>
+</html>
