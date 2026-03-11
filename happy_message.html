@@ -267,10 +267,13 @@ function typeMessage(msgKey) {
 
     function typing() {
     if (i < data.text.length) {
-        box.innerHTML += data.text.charAt(i);
+        let char = data.text.charAt(i);
+        if (char === "\n") char = "<br>"; // لو \n خليها <br>
+        box.innerHTML += char;
         i++;
         typingTimer = setTimeout(typing, 25);
     }
+}
 }
     typing();
 }
